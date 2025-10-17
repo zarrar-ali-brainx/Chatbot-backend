@@ -20,7 +20,7 @@ export class VectorSearchService {
     queryEmbedding: number[],
     userId: number,
     limit: number = 5,
-    threshold: number = 0.7
+    threshold: number = 0.3
   ): Promise<DocumentChunk[]> {
     const chunks = await this.chunkRepository.find({
       where: {
@@ -30,9 +30,10 @@ export class VectorSearchService {
     });
 
     const chunksWithSimilarity = chunks.map(chunk => {
+      const embedding = chunk.embedding ? JSON.parse(chunk.embedding) : []; // Parse JSON string to number array
       const similarity = this.embeddingService.calculateSimilarity(
         queryEmbedding,
-        chunk.embedding
+        embedding
       );
       return {
         ...chunk,
@@ -57,7 +58,7 @@ export class VectorSearchService {
     documentId: number,
     userId: number,
     limit: number = 5,
-    threshold: number = 0.7
+    threshold: number = 0.3
   ): Promise<DocumentChunk[]> {
     const chunks = await this.chunkRepository.find({
       where: {
@@ -68,9 +69,10 @@ export class VectorSearchService {
     });
   
     const chunksWithSimilarity = chunks.map( chunk => {
+      const embedding = chunk.embedding ? JSON.parse(chunk.embedding) : []; // Parse JSON string to number array
       const similarity = this.embeddingService.calculateSimilarity(
         queryEmbedding,
-        chunk.embedding
+        embedding
       );
       return {
         ...chunk,
@@ -103,9 +105,10 @@ export class VectorSearchService {
     });
 
     const chunksWithSimilarity = chunks.map( chunk => {
+      const embedding = chunk.embedding ? JSON.parse(chunk.embedding) : []; // Parse JSON string to number array
       const similarity = this.embeddingService.calculateSimilarity(
         queryEmbedding,
-        chunk.embedding
+        embedding
       );
       return {
         ...chunk,
@@ -135,9 +138,10 @@ export class VectorSearchService {
       }
     });
     const chunksWithSimilarity = chunks.map( chunk => {
+      const embedding = chunk.embedding ? JSON.parse(chunk.embedding) : []; // Parse JSON string to number array
       const similarity = this.embeddingService.calculateSimilarity(
         queryEmbedding,
-        chunk.embedding
+        embedding
       );
       return {
         ...chunk,
@@ -155,7 +159,7 @@ export class VectorSearchService {
     queryEmbedding: number[],
     userId: number,
     limit: number = 5,
-    threshold: number = 0.7
+    threshold: number = 0.3
   ): Promise<DocumentChunk[]> {
     const textResults = await this.chunkRepository
       .createQueryBuilder('chunk')
@@ -164,9 +168,10 @@ export class VectorSearchService {
       .getMany();
 
     const textResultsWithSimilarity = textResults.map(chunk => {
+      const embedding = chunk.embedding ? JSON.parse(chunk.embedding) : []; // Parse JSON string to number array
       const similarity = this.embeddingService.calculateSimilarity(
         queryEmbedding,
-        chunk.embedding
+        embedding
       );
       return {
         ...chunk,

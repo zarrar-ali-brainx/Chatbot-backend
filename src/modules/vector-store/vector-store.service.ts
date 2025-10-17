@@ -29,7 +29,7 @@ export class VectorStoreService {
       const embedding = await this.embeddingService.generateEmbedding(chunk.content);
       chunksWithEmbeddings.push({
         ...chunk,
-        embedding: embedding
+        embedding: JSON.stringify(embedding) // Convert to JSON string
       })
     }
     
@@ -87,7 +87,7 @@ export class VectorStoreService {
 
     for (const chunk of chunks) {
       await this.chunkRepository.update(chunk.id, {
-        embedding: null as any
+        embedding: null
       });
     }
     

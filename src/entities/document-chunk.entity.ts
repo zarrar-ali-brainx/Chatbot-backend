@@ -21,8 +21,8 @@ export class DocumentChunk {
   @Column('text')
   content: string;
 
-  @Column({ type: 'vector', dimension: 1536 })
-  embedding: number[];
+  @Column('text', { nullable: true })
+  embedding: string | null; // Store as JSON string, will be parsed when needed
 
   @Column('jsonb', { nullable: true })
   metadata: Record<string, any>;

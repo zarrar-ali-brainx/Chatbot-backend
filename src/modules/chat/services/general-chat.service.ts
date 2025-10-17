@@ -9,7 +9,7 @@ export class GeneralChatService {
   constructor(private readonly configService: ConfigService) {
     // Initialize OpenAI client
     this.openai = new OpenAI({
-      apiKey: this.configService.get<string>('openai.apiKey'),
+      apiKey: this.configService.get<string>('app.openai.apiKey'),
     });
   }
 

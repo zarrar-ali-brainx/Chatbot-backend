@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional, IsIn } from 'class-validator';
 
 export class ChatRequestDto {
   /**
@@ -9,6 +9,13 @@ export class ChatRequestDto {
   @IsNotEmpty({ message: 'Message is required' })
   @MaxLength(4000, { message: 'Message must not exceed 4000 characters' })
   message: string;
+
+  /**
+   * Type of chat - either 'general' or 'custom' (RAG)
+   */
+  @IsString({ message: 'Chat type must be a string' })
+  @IsIn(['general', 'custom'], { message: 'Chat type must be either "general" or "custom"' })
+  chatType: string;
 
   /**
    * Optional session ID to continue an existing conversation

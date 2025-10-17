@@ -29,7 +29,7 @@ export class ChatService {
    * 4. Save AI response to database
    * 5. Return chat response
    */
-  async sendGeneralMessage(message: string, userId: number): Promise<{ response: string; sessionId: number }> {
+  async sendGeneralMessage(message: string, userId: number, sessionId?: string): Promise<{ response: string; sessionId: number }> {
     // TODO: Get or create active session
     let session = await this.getActiveSession(userId);
     if (!session) {
@@ -94,7 +94,7 @@ export class ChatService {
    * 5. Save AI response with sources
    * 6. Return chat response with sources
    */
-  async sendRagMessage(message: string, userId: number): Promise<{ response: string; sources: any[]; sessionId: number }> {
+  async sendRagMessage(message: string, userId: number, sessionId?: string): Promise<{ response: string; sources: any[]; sessionId: number }> {
     // TODO: Get or create active session
     let session = await this.getActiveSession(userId);
     if (!session) {

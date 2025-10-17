@@ -25,7 +25,7 @@ export class ChatController {
   ) {
     // Call chatService.sendGeneralMessage() with message and user ID
     const userId = req.user.id;
-    return this.chatService.sendGeneralMessage(chatRequestDto.message, userId);
+    return this.chatService.sendGeneralMessage(chatRequestDto.message, userId, chatRequestDto.sessionId);
   }
 
   /**
@@ -46,7 +46,7 @@ export class ChatController {
   ) {
     // Call chatService.sendRagMessage() with message and user ID
     const userId = req.user.id;
-    return this.chatService.sendRagMessage(chatRequestDto.message, userId);
+    return this.chatService.sendRagMessage(chatRequestDto.message, userId, chatRequestDto.sessionId);
   }
 
   /**

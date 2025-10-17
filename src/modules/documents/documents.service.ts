@@ -6,6 +6,7 @@ import { Document } from '../../entities/document.entity';
 import { DocumentChunk } from '../../entities/document-chunk.entity';
 import { FileParserService } from './services/file-parser.service';
 import { ChunkingService } from './services/chunking.service';
+import { VectorStoreService } from '../vector-store/vector-store.service';
 
 @Injectable()
 export class DocumentsService {
@@ -16,6 +17,7 @@ export class DocumentsService {
     private readonly chunkRepository: Repository<DocumentChunk>,
     private readonly fileParserService: FileParserService,
     private readonly chunkingService: ChunkingService,
+    private readonly vectorStoreService: VectorStoreService,
   ) {}
 
   /**
@@ -37,6 +39,7 @@ export class DocumentsService {
     const chunks = await this.chunkingService.chunkText(content);
 
     const document = this.documentRepository.create({
+      filename: file.originalname, // Use originalname as filename
       original_name: file.originalname,
       file_type: file.mimetype,
       file_size: file.size,
@@ -55,6 +58,9 @@ export class DocumentsService {
     );
 
     await this.chunkRepository.save(chunkEntities);
+
+    // Generate embeddings for the chunks
+    await this.vectorStoreService.generateEmbeddingsForDocument(savedDocument.id, userId);
 
     return savedDocument;
   }
@@ -102,8 +108,10 @@ export class DocumentsService {
   async remove(id: number, userId: number): Promise<{ message: string }> {
     const document = await this.findById(id, userId);
 
-    await this.chunkRepository.remove(document.chunks);
+    // Delete all chunks for this document
+    await this.chunkRepository.delete({ document_id: id, user_id: userId });
 
+    // Delete the document
     await this.documentRepository.delete(document.id);
 
     return { message: 'Document deleted successfully' };

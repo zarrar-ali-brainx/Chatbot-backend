@@ -8,7 +8,7 @@ export class EmbeddingService {
 
   constructor(private readonly configService: ConfigService) {
     this.openai = new OpenAI({
-      apiKey: this.configService.get<string>('openai.apiKey'),
+      apiKey: this.configService.get<string>('app.openai.apiKey'),
     })
   }
 

@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('app', () => ({
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   jwt: {
     secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-here',
@@ -13,12 +13,12 @@ export default registerAs('app', () => ({
     embeddingModel: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small',
   },
   upload: {
-    maxFileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 10485760, // 10MB
+    maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760', 10), // 10MB
     allowedFileTypes: (process.env.ALLOWED_FILE_TYPES || 'pdf,txt,md,docx').split(','),
   },
   vector: {
-    dimension: parseInt(process.env.VECTOR_DIMENSION, 10) || 1536,
-    chunkSize: parseInt(process.env.CHUNK_SIZE, 10) || 1000,
-    chunkOverlap: parseInt(process.env.CHUNK_OVERLAP, 10) || 200,
+    dimension: parseInt(process.env.VECTOR_DIMENSION || '1536', 10),
+    chunkSize: parseInt(process.env.CHUNK_SIZE || '1000', 10),
+    chunkOverlap: parseInt(process.env.CHUNK_OVERLAP || '200', 10),
   },
 }));
