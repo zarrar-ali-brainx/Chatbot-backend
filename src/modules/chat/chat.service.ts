@@ -30,15 +30,20 @@ export class ChatService {
    * 5. Return chat response
    */
   async sendGeneralMessage(message: string, userId: number, sessionId?: string): Promise<{ response: string; sessionId: number }> {
-    // TODO: Get or create active session
-    let session = await this.getActiveSession(userId);
-    if (!session) {
-      session = await this.createSession(userId);
+    // Get or create session
+    let session;
+    if (sessionId) {
+      // Try to get existing session
+      session = await this.sessionRepository.findOne({
+        where: { id: parseInt(sessionId), user_id: userId, chat_type: 'general' }
+      });
     }
-    // let session = await this.getActiveSession(userId);
-    // if (!session) {
-    //   session = await this.createSession(userId);
-    // }
+    
+    if (!session) {
+      // Create new session with first 30 characters of user message as name
+      const sessionName = message.length > 30 ? message.substring(0, 30) + '...' : message;
+      session = await this.createSession(userId, 'general', sessionName);
+    }
 
     // TODO: Save user message
     const userMessage = this.messageRepository.create({
@@ -95,10 +100,19 @@ export class ChatService {
    * 6. Return chat response with sources
    */
   async sendRagMessage(message: string, userId: number, sessionId?: string): Promise<{ response: string; sources: any[]; sessionId: number }> {
-    // TODO: Get or create active session
-    let session = await this.getActiveSession(userId);
+    // Get or create session
+    let session;
+    if (sessionId) {
+      // Try to get existing session
+      session = await this.sessionRepository.findOne({
+        where: { id: parseInt(sessionId), user_id: userId, chat_type: 'custom' }
+      });
+    }
+    
     if (!session) {
-      session = await this.createSession(userId);
+      // Create new session with first 30 characters of user message as name
+      const sessionName = message.length > 30 ? message.substring(0, 30) + '...' : message;
+      session = await this.createSession(userId, 'custom', sessionName);
     }
     // let session = await this.getActiveSession(userId);
     // if (!session) {
@@ -235,12 +249,13 @@ export class ChatService {
    * 2. Set default session name
    * 3. Return session details
    */
-  async createSession(userId: number): Promise<ChatSession> {
-    // Create new session
+  async createSession(userId: number, chatType: 'general' | 'custom' = 'general', sessionName?: string): Promise<ChatSession> {
+    // Create new session with custom name or default name
+    const defaultName = `${chatType === 'general' ? 'General' : 'Document RAG'} Chat`;
     const session = this.sessionRepository.create({
-      session_name: `Chat Session ${new Date().toLocaleString()}`,
+      session_name: sessionName || defaultName,
       user_id: userId,
-      chat_type: 'general'
+      chat_type: chatType
     });
 
     // Save session
